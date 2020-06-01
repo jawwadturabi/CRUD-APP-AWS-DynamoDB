@@ -50,26 +50,30 @@ app.post('/create', (req, res) => {
 
 app.put('/update', (req, res) => {
     var params = {
-        TableName: '<Table-Name>',
+        ExpressionAttributeNames: {
+            "#LN": "last_name"
+        },
+        ExpressionAttributeValues: {
+            ":l": {
+                S: req.body.last_name
+            }
+        },
         Key: {
             phone_number: {
                 S: req.body.phone_number
-            },
-            first_name: {
-                S: req.body.first_name
-            },
-            last_name: {
-                S: req.body.last_name
             }
-        }
-    }
+        },
+        ReturnValues: "ALL_NEW",
+        TableName: '<Table-Name>',
+        UpdateExpression: "SET #LN = :l"
+    };
     dynamodb.updateItem(params, function (err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else {
-            console.log(data);
+            console.log(data)
             res.json(data)
         }
-    })
+    });
 })
 
 app.delete('/delete', (req, res) => {
